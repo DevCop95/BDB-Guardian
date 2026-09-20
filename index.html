@@ -1,0 +1,256 @@
+﻿<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BDB-Guardian - Detection Report</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--fg:#c9d1d9;--mut:#8b949e;
+--blue:#58a6ff;--cyan:#79c0ff;--red:#ff7b72;--redbg:#5a0f0f;--green:#7ee2a0;--greenbg:#0f3d1f}
+*{box-sizing:border-box}
+body{font-family:Consolas,Menlo,monospace;background:var(--bg);color:var(--fg);margin:0;padding:0}
+.wrap{max-width:1080px;margin:0 auto;padding:24px 16px 64px}
+.hero img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line)}
+h1{color:var(--blue);font-size:1.6rem;margin:1.2em 0 .3em}
+h2{color:var(--cyan);font-size:1.15rem;margin-top:2em}
+a{color:var(--blue)}
+.note{color:var(--mut)}
+.authors{display:flex;gap:16px;flex-wrap:wrap;margin:1em 0}
+.author{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+border-radius:12px;padding:10px 16px 10px 10px;text-decoration:none;color:var(--fg);flex:1 1 260px}
+.author img{width:56px;height:56px;border-radius:50%;border:2px solid var(--line)}
+.author b{display:block}
+.author small{color:var(--mut)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:1em 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:transform .12s,border-color .12s}
+.card:hover{transform:translateY(-2px);border-color:var(--blue)}
+.card h3{margin:.2em 0 .5em;font-size:1rem}
+.badge{display:inline-block;padding:.25em .9em;border-radius:999px;font-weight:bold;font-size:.85rem}
+.crit{background:var(--redbg);color:var(--red)}
+.clean{background:var(--greenbg);color:var(--green)}
+.info{background:#222;color:#ccc}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:1em;overflow-x:auto;white-space:pre-wrap;font-size:.82rem;line-height:1.5}
+table{border-collapse:collapse;margin:1em 0;width:100%;font-size:.85rem}
+td,th{border:1px solid var(--line);padding:.5em .8em;text-align:left}
+th{background:var(--panel)}
+ul{line-height:1.7}
+.btn{display:inline-block;background:var(--panel);border:1px solid var(--blue);color:var(--blue);
+border-radius:8px;padding:.6em 1.2em;cursor:pointer;font-family:inherit;font-size:.9rem;margin:.3em .3em .3em 0}
+.btn:hover{background:#1c2a3a}
+/* modal */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;padding:4vh 4vw}
+.modal.open{display:block}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px;max-width:900px;max-height:92vh;
+overflow:auto;margin:0 auto;padding:20px}
+.sheet pre{max-height:56vh}
+.close{float:right;background:var(--redbg);color:var(--red);border:1px solid var(--red);border-radius:8px;
+padding:.35em .8em;cursor:pointer;font-family:inherit}
+footer{margin-top:3em;color:var(--mut);font-size:.8rem;border-top:1px solid var(--line);padding-top:1em}
+@media (max-width:600px){h1{font-size:1.25rem}pre{font-size:.72rem}.wrap{padding:16px 10px 48px}}
+</style></head><body>
+<div class="wrap">
+
+<div class="hero"><img src="docs/banner.png" alt="BDB-Guardian banner"></div>
+
+<h1>BDB-Guardian - Detection Report</h1>
+<p class="note">Defensive PowerShell monitor vs the BigDiskBuster technique
+(Defender-update DoS via disk exhaustion). Tested on Windows 11, admin PowerShell 5.1.
+The simulator used a controlled 256 MB file - the disk was never filled.</p>
+
+<div>
+<button class="btn" onclick="openModal('m-method')">How it detects</button>
+<button class="btn" onclick="openModal('m-iocs')">IoC reference</button>
+<a class="btn" style="text-decoration:none" href="https://github.com/DevCop95/BDB-Guardian">Repository</a>
+</div>
+
+<h2>Authors &amp; evidence</h2>
+<div class="authors">
+<a class="author" href="https://github.com/DevCop95">
+<img src="https://github.com/DevCop95.png?s=112" alt="DevCop95 avatar">
+<span><b>DevCop95</b><small>BDB-Guardian author (this repo)</small></span></a>
+<a class="author" href="https://github.com/MSNightmare">
+<img src="https://github.com/MSNightmare.png?s=112" alt="MSNightmare avatar">
+<span><b>MSNightmare</b><small>Original BigDiskBuster PoC (MIT) - credited inspiration</small></span></a>
+</div>
+
+<h2>Verdict summary (from JSON reports)</h2>
+<table><tr><th>Phase</th><th>Result</th></tr>
+<tr><td>Baseline (idle)</td><td><span class="badge clean">CLEAN</span> No indicators - 344/344 PIDs, 47.7 s</td></tr>
+<tr><td>Live detection</td><td><span class="badge crit">CRITICAL</span> PID 19052 holds MRT+volume, buster-file present - 352/352 PIDs, 13.7 s</td></tr>
+<tr><td>Post (auto-cleaned)</td><td><span class="badge clean">CLEAN</span> No indicators - 347/347 PIDs, 42.2 s</td></tr></table>
+
+<h2>Click a phase for the full capture (popup)</h2>
+<div class="cards">
+<div class="card" onclick="openModal('m-base')"><h3>Phase 1 - Baseline</h3><span class="badge clean">CLEAN</span><p class="note">Idle system. Legit volume holders whitelisted.</p></div>
+<div class="card" onclick="openModal('m-det')"><h3>Phase 2 - Detection</h3><span class="badge crit">CRITICAL</span><p class="note">MRT_LOCK + VOLUME_HANDLE, same PID + buster-file.</p></div>
+<div class="card" onclick="openModal('m-post')"><h3>Phase 3 - Post</h3><span class="badge clean">CLEAN</span><p class="note">Simulator self-cleaned. Zero leftovers.</p></div>
+</div>
+
+<h2>Inline captures</h2>
+<p class="note">Same content as the popups, for readers that prefer scrolling.</p>
+
+<h2>Capture 1 - Baseline (idle system)</h2><div><span class="badge clean">CLEAN</span></div><pre>================================================================
+ BDB-Guardian :: scan 20260919-215822
+================================================================
+
+[*] Volume C: -&gt; \Device\HarddiskVolume3
+[*] MRT: C:\Windows\System32\MRT.exe
+[*] Hidden-temp threshold: 1024 MB | time-box: 100 s
+
+[1/3] Restart Manager on MRT.exe...
+      0 process(es) holding MRT open (0,0 s)
+[2/3] Volume handle scan (parallel)...
+      PIDs: 344/344 in 47,7 s | matches: 8
+
+----- HANDLE FINDINGS -----
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 3152 (svchost) handle 744
+      Path: C:\WINDOWS\system32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 4892 (svchost) handle 460
+      Path: C:\WINDOWS\System32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 6508 (SearchIndexer) handle 4772
+      Path: C:\WINDOWS\system32\SearchIndexer.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 15740 (dllhost) handle 612
+      Path: C:\WINDOWS\system32\DllHost.exe
+      Obj : \Device\HarddiskVolume3\
+
+----- GIANT HIDDEN FILES IN TEMP -----
+(none &gt;= 1024 MB)
+
+================================================================
+ VERDICT: CLEAN - No indicators
+================================================================</pre>
+
+<h2>Capture 2 - Detection (live IoCs)</h2><div><span class="badge crit">CRITICAL</span></div><pre>================================================================
+ BDB-Guardian :: scan 20260919-223650
+================================================================
+
+[*] MRT: C:\Windows\System32\MRT.exe
+[*] Hidden-temp threshold: 100 MB | time-box: 70 s
+
+[1/3]+[2/3] Native probes in isolated worker (RM + handles)...
+      MRT holders: 1 | volume PIDs: 352/352 in 13,3 s | matches: 10
+[*] Volume C: -&gt; \Device\HarddiskVolume3
+
+----- HANDLE FINDINGS -----
+[High] MRT_LOCK :: PID 19052 (powershell) handle RM
+      Path: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+      Obj : C:\Windows\System32\MRT.exe
+[High] VOLUME_HANDLE :: PID 19052 (powershell) handle 2500
+      Path: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 15740 (dllhost) handle 612
+      Path: C:\WINDOWS\system32\DllHost.exe
+      Obj : \Device\HarddiskVolume3\
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 6508 (SearchIndexer) handle 4772
+      Path: C:\WINDOWS\system32\SearchIndexer.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 4892 (svchost) handle 460
+      Path: C:\WINDOWS\System32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 3152 (svchost) handle 744
+      Path: C:\WINDOWS\system32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+
+----- GIANT HIDDEN FILES IN TEMP -----
+[High] C:\Users\Admin\AppData\Local\Temp\{de408c31-1a00-49d6-8bf7-23d945e4ae4c}  (256 MB, GuidLike=True)
+
+================================================================
+ VERDICT: CRITICAL - Confirmed BigDiskBuster-like activity: PID 19052 holds MRT+volume, buster-file present
+================================================================</pre>
+
+<h2>Capture 3 - Post-simulation (auto-cleaned)</h2><div><span class="badge clean">CLEAN</span></div><pre>================================================================
+ BDB-Guardian :: scan 20260919-222744
+================================================================
+
+[*] MRT: C:\Windows\System32\MRT.exe
+[*] Hidden-temp threshold: 1024 MB | time-box: 70 s
+
+[1/3]+[2/3] Native probes in isolated worker (handles)...
+      volume PIDs: 347/347 in 41,8 s | matches: 8
+[*] Volume C: -&gt; \Device\HarddiskVolume3
+
+----- HANDLE FINDINGS -----
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 15740 (dllhost) handle 612
+      Path: C:\WINDOWS\system32\DllHost.exe
+      Obj : \Device\HarddiskVolume3\
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 4892 (svchost) handle 460
+      Path: C:\WINDOWS\System32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 3152 (svchost) handle 744
+      Path: C:\WINDOWS\system32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 6508 (SearchIndexer) handle 4772
+      Path: C:\WINDOWS\system32\SearchIndexer.exe
+      Obj : \Device\HarddiskVolume3
+
+----- GIANT HIDDEN FILES IN TEMP -----
+(none &gt;= 1024 MB)
+
+================================================================
+ VERDICT: CLEAN - No indicators
+================================================================</pre>
+
+<footer>BDB-Guardian by <a href="https://github.com/DevCop95">DevCop95</a> - inspired by
+<a href="https://github.com/MSNightmare/BigDiskBuster">MSNightmare/BigDiskBuster</a> (MIT).
+Full machine-readable evidence: <a href="https://github.com/DevCop95/BDB-Guardian/tree/main/captures">captures/</a></footer>
+</div>
+
+<!-- popups -->
+<div class="modal" id="m-base" onclick="if(event.target===this)closeModal('m-base')"><div class="sheet">
+<button class="close" onclick="closeModal('m-base')">Close</button>
+<h2>Phase 1 - Baseline <span class="badge clean">CLEAN</span></h2>
+<p>Idle system scan: 344/344 PIDs, 8 handle matches, all whitelisted OS services
+(svchost, SearchIndexer, dllhost hold volume handles legitimately). No hidden temp files.</p>
+<pre>VERDICT: CLEAN - No indicators</pre>
+<p class="note">False-positive control: lone volume handles never exceed MEDIUM; OS-service whitelist by name+path.</p>
+</div></div>
+
+<div class="modal" id="m-det" onclick="if(event.target===this)closeModal('m-det')"><div class="sheet">
+<button class="close" onclick="closeModal('m-det')">Close</button>
+<h2>Phase 2 - Detection <span class="badge crit">CRITICAL</span></h2>
+<p>Same-PID correlation fired: PID 19052 (non-whitelisted) held
+<code>MRT.exe</code> (Restart Manager, 0.1 s) <b>and</b> the C: volume (handle scan),
+plus a 256 MB hidden GUID buster-file. FP ~ 0.</p>
+<pre>VERDICT: CRITICAL - Confirmed BigDiskBuster-like activity:
+PID 19052 holds MRT+volume, buster-file present</pre>
+<p class="note">Repeated on consecutive runs (see captures/stability-run*.log). Zero Application Error events after the interop fix.</p>
+</div></div>
+
+<div class="modal" id="m-post" onclick="if(event.target===this)closeModal('m-post')"><div class="sheet">
+<button class="close" onclick="closeModal('m-post')">Close</button>
+<h2>Phase 3 - Post <span class="badge clean">CLEAN</span></h2>
+<p>Simulator self-terminated: handles closed, buster-file deleted, cleanup verified
+(no hidden files &gt;= 50 MB in TEMP). Monitor back to CLEAN.</p>
+<pre>VERDICT: CLEAN - No indicators</pre>
+</div></div>
+
+<div class="modal" id="m-method" onclick="if(event.target===this)closeModal('m-method')"><div class="sheet">
+<button class="close" onclick="closeModal('m-method')">Close</button>
+<h2>How it detects</h2>
+<ul>
+<li><b>IoC 1 - MRT lock:</b> Restart Manager (<code>RmStartSession/Register/GetList/EndSession</code>, ~0.1 s) with correct <code>RM_PROCESS_INFO</code> marshaling + retry loop. Name scan backs it up.</li>
+<li><b>IoC 2 - volume handle:</b> parallel native scan (<code>NtQuerySystemInformation</code> + <code>DuplicateHandle</code> + <code>NtQueryObject</code>), disk-files only (<code>GetFileType</code> gate skips pipes that hang queries).</li>
+<li><b>IoC 3 - buster-file:</b> hidden + oversized + GUID-like name in TEMP.</li>
+<li><b>Verdict:</b> same-PID MRT+volume correlation = CRITICAL. Lone volume handle never exceeds MEDIUM.</li>
+<li><b>Stability:</b> monitor is 100% managed; all native code runs in a sacrificial worker. Root-caused a <code>0xC0000374</code> heap corruption (wrong RM struct) via forum research and fixed it properly.</li>
+</ul>
+</div></div>
+
+<div class="modal" id="m-iocs" onclick="if(event.target===this)closeModal('m-iocs')"><div class="sheet">
+<button class="close" onclick="closeModal('m-iocs')">Close</button>
+<h2>IoC reference</h2>
+<table><tr><th>IoC</th><th>Signal</th><th>FP profile</th></tr>
+<tr><td>MRT_LOCK</td><td>Non-whitelisted PID holds <code>C:\Windows\System32\MRT.exe</code></td><td>Very strong</td></tr>
+<tr><td>VOLUME_HANDLE</td><td>Non-whitelisted PID holds <code>\Device\HarddiskVolumeN</code></td><td>Weak alone (whitelisted services)</td></tr>
+<tr><td>BUSTER_FILE</td><td>Hidden + &gt;= threshold + GUID-like name in TEMP</td><td>Medium</td></tr></table>
+</div></div>
+
+<script>
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){
+document.querySelectorAll('.modal.open').forEach(function(m){m.classList.remove('open');});}});
+</script>
+</body></html>

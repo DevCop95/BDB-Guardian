@@ -1,0 +1,38 @@
+﻿================================================================
+ BDB-Guardian :: scan 20260919-223650
+================================================================
+
+[*] MRT: C:\Windows\System32\MRT.exe
+[*] Hidden-temp threshold: 100 MB | time-box: 70 s
+
+[1/3]+[2/3] Native probes in isolated worker (RM + handles)...
+      MRT holders: 1 | volume PIDs: 352/352 in 13,3 s | matches: 10
+[*] Volume C: -> \Device\HarddiskVolume3
+
+----- HANDLE FINDINGS -----
+[High] MRT_LOCK :: PID 19052 (powershell) handle RM
+      Path: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+      Obj : C:\Windows\System32\MRT.exe
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 15740 (dllhost) handle 612
+      Path: C:\WINDOWS\system32\DllHost.exe
+      Obj : \Device\HarddiskVolume3\
+[High] VOLUME_HANDLE :: PID 19052 (powershell) handle 2500
+      Path: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 6508 (SearchIndexer) handle 4772
+      Path: C:\WINDOWS\system32\SearchIndexer.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 4892 (svchost) handle 460
+      Path: C:\WINDOWS\System32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+[Info/whitelist: OS service with legitimate volume handle] VOLUME_HANDLE :: PID 3152 (svchost) handle 744
+      Path: C:\WINDOWS\system32\svchost.exe
+      Obj : \Device\HarddiskVolume3
+
+----- GIANT HIDDEN FILES IN TEMP -----
+[High] C:\Users\Admin\AppData\Local\Temp\{de408c31-1a00-49d6-8bf7-23d945e4ae4c}  (256 MB, GuidLike=True)
+
+================================================================
+ VERDICT: CRITICAL - Confirmed BigDiskBuster-like activity: PID 19052 holds MRT+volume, buster-file present
+================================================================
+[*] JSON: C:\Users\Admin\Desktop\vscode\trickmewin\BDB-Guardian\captures\scan-20260919-223650.json

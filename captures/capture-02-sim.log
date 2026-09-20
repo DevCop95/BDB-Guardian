@@ -1,0 +1,12 @@
+﻿=== BigDiskBuster IoC simulator (SAFE) ===
+Simulator PID: 19052
+Duration: 400s | Controlled file: 256 MB (disk is NOT filled)
+[1/3] IoC MRT_LOCK ACTIVE: handle open on MRT.exe
+[2/3] IoC VOLUME_HANDLE ACTIVE: handle open on \\.\C:
+[3/3] IoC BUSTER-FILE ACTIVE: C:\Users\Admin\AppData\Local\Temp\{de408c31-1a00-49d6-8bf7-23d945e4ae4c} (256 MB, hidden)
+Detection window: run BDBMonitor.ps1 NOW.
+Releasing IoCs...
+- MRT.exe handle closed
+- volume handle closed
+- buster-file deleted
+[WARNING] Leftovers: C:\Users\Admin\AppData\Local\Temp\{0ddf2c10-c4b2-43d7-9444-44c052446f1c}

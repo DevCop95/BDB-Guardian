@@ -1,0 +1,88 @@
+﻿{
+    "timestamp":  "2026-09-19T22:37:04",
+    "verdict":  "CRITICAL",
+    "detail":  "Confirmed BigDiskBuster-like activity: PID 19052 holds MRT+volume, buster-file present",
+    "volumeDevice":  "\\Device\\HarddiskVolume3",
+    "tempThresholdMB":  100,
+    "scanSeconds":  13.7,
+    "pidsScanned":  352,
+    "pidsTotal":  352,
+    "volScanSeconds":  13.3,
+    "handleFindings":  [
+                           {
+                               "Type":  "MRT_LOCK",
+                               "PID":  19052,
+                               "Process":  "powershell",
+                               "Path":  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                               "Handle":  "RM",
+                               "ObjectName":  "C:\\Windows\\System32\\MRT.exe",
+                               "Severity":  "High",
+                               "Whitelisted":  false,
+                               "Why":  ""
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  15740,
+                               "Process":  "dllhost",
+                               "Path":  "C:\\WINDOWS\\system32\\DllHost.exe",
+                               "Handle":  "612",
+                               "ObjectName":  "\\Device\\HarddiskVolume3\\",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  19052,
+                               "Process":  "powershell",
+                               "Path":  "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+                               "Handle":  "2500",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "High",
+                               "Whitelisted":  false,
+                               "Why":  ""
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  6508,
+                               "Process":  "SearchIndexer",
+                               "Path":  "C:\\WINDOWS\\system32\\SearchIndexer.exe",
+                               "Handle":  "4772",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  4892,
+                               "Process":  "svchost",
+                               "Path":  "C:\\WINDOWS\\System32\\svchost.exe",
+                               "Handle":  "460",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  3152,
+                               "Process":  "svchost",
+                               "Path":  "C:\\WINDOWS\\system32\\svchost.exe",
+                               "Handle":  "744",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           }
+                       ],
+    "tempFiles":  [
+                      {
+                          "Path":  "C:\\Users\\Admin\\AppData\\Local\\Temp\\{de408c31-1a00-49d6-8bf7-23d945e4ae4c}",
+                          "SizeMB":  256,
+                          "Hidden":  true,
+                          "GuidLike":  true,
+                          "LastWrite":  "2026-09-19T22:32:10"
+                      }
+                  ]
+}

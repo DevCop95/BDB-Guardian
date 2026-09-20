@@ -1,0 +1,60 @@
+﻿{
+    "timestamp":  "2026-09-19T22:28:27",
+    "verdict":  "CLEAN",
+    "detail":  "No indicators",
+    "volumeDevice":  "\\Device\\HarddiskVolume3",
+    "tempThresholdMB":  1024,
+    "scanSeconds":  42.2,
+    "pidsScanned":  347,
+    "pidsTotal":  347,
+    "volScanSeconds":  41.8,
+    "handleFindings":  [
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  15740,
+                               "Process":  "dllhost",
+                               "Path":  "C:\\WINDOWS\\system32\\DllHost.exe",
+                               "Handle":  "612",
+                               "ObjectName":  "\\Device\\HarddiskVolume3\\",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  4892,
+                               "Process":  "svchost",
+                               "Path":  "C:\\WINDOWS\\System32\\svchost.exe",
+                               "Handle":  "460",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  3152,
+                               "Process":  "svchost",
+                               "Path":  "C:\\WINDOWS\\system32\\svchost.exe",
+                               "Handle":  "744",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           },
+                           {
+                               "Type":  "VOLUME_HANDLE",
+                               "PID":  6508,
+                               "Process":  "SearchIndexer",
+                               "Path":  "C:\\WINDOWS\\system32\\SearchIndexer.exe",
+                               "Handle":  "4772",
+                               "ObjectName":  "\\Device\\HarddiskVolume3",
+                               "Severity":  "Info",
+                               "Whitelisted":  true,
+                               "Why":  "OS service with legitimate volume handle"
+                           }
+                       ],
+    "tempFiles":  [
+
+                  ]
+}
