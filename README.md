@@ -31,6 +31,10 @@ to GitHub and enable *Settings > Pages > Deploy from branch > /(root)*.
 Full transcripts + JSON verdicts: [`captures/`](captures/) and the
 [evidence report](https://devcop95.github.io/BDB-Guardian/).
 
+Terminal output during the live-detection run:
+
+![Terminal during live detection](docs/shot-detection.png)
+
 ## MITRE ATT&CK
 
 | Tactic | Technique | Procedure |
