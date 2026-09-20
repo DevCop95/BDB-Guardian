@@ -52,6 +52,10 @@ footer{margin-top:3em;color:var(--mut);font-size:.8rem;border-top:1px solid var(
 <div class="hero"><img src="docs/banner.png" alt="BDB-Guardian banner"></div>
 
 <div id="dualbanner"></div>
+<noscript><div style="display:flex;gap:14px;flex-wrap:wrap;margin:1.2em 0">
+<a href="https://github.com/MSNightmare/BigDiskBuster" style="flex:1 1 280px">MSNightmare / BigDiskBuster - technique source (PoC, MIT)</a>
+<a href="https://github.com/DevCop95/BDB-Guardian" style="flex:1 1 280px">DevCop95 / BDB-Guardian - detection source (this report)</a>
+</div></noscript>
 
 <h1>BDB-Guardian - Detection Report</h1>
 <p class="note">Defensive PowerShell monitor vs the BigDiskBuster technique
@@ -62,16 +66,6 @@ The simulator used a controlled 256 MB file - the disk was never filled.</p>
 <button class="btn" onclick="openModal('m-method')">How it detects</button>
 <button class="btn" onclick="openModal('m-iocs')">IoC reference</button>
 <a class="btn" style="text-decoration:none" href="https://github.com/DevCop95/BDB-Guardian">Repository</a>
-</div>
-
-<h2>Authors &amp; evidence</h2>
-<div class="authors">
-<a class="author" href="https://github.com/DevCop95">
-<img src="https://github.com/DevCop95.png?s=112" alt="DevCop95 avatar">
-<span><b>DevCop95</b><small>BDB-Guardian author (this repo)</small></span></a>
-<a class="author" href="https://github.com/MSNightmare">
-<img src="https://github.com/MSNightmare.png?s=112" alt="MSNightmare avatar">
-<span><b>MSNightmare</b><small>Original BigDiskBuster PoC (MIT) - credited inspiration</small></span></a>
 </div>
 
 <h2>Verdict summary (from JSON reports)</h2>
@@ -269,18 +263,19 @@ PID 19052 holds MRT+volume, buster-file present</pre>
 </div></div>
 
 <script>
-// Dual-profile banner, generated on every page load.
+// Dual-profile provenance banner, generated on every page load.
 (function(){
 var now = new Date();
 var el = document.getElementById('dualbanner');
 el.innerHTML =
-'<div style="display:flex;gap:14px;flex-wrap:wrap;margin:1.2em 0">'
+'<h2 style="margin-bottom:.2em">Provenance - where everything on this page comes from</h2>'
++'<div style="display:flex;gap:14px;flex-wrap:wrap;margin:1.2em 0">'
 +'<a href="https://github.com/MSNightmare/BigDiskBuster" style="flex:1 1 280px;display:flex;align-items:center;gap:12px;background:#161b22;border:1px solid #ff7b72;border-radius:12px;padding:12px;text-decoration:none;color:#c9d1d9">'
 +'<img src="https://github.com/MSNightmare.png?s=112" alt="PoC author" style="width:64px;height:64px;border-radius:50%">'
-+'<span><b>MSNightmare / BigDiskBuster</b><br><small style="color:#8b949e">Original PoC (MIT) - the technique</small></span></a>'
++'<span><b>SOURCE OF THE TECHNIQUE</b><br>MSNightmare / BigDiskBuster<br><small style="color:#8b949e">Original PoC (MIT) - Defender-update DoS</small></span></a>'
 +'<a href="https://github.com/DevCop95/BDB-Guardian" style="flex:1 1 280px;display:flex;align-items:center;gap:12px;background:#161b22;border:1px solid #58a6ff;border-radius:12px;padding:12px;text-decoration:none;color:#c9d1d9">'
 +'<img src="https://github.com/DevCop95.png?s=112" alt="Guardian author" style="width:64px;height:64px;border-radius:50%">'
-+'<span><b>DevCop95 / BDB-Guardian</b><br><small style="color:#8b949e">Defensive monitor - the detection</small></span></a>'
++'<span><b>SOURCE OF THE DETECTION</b><br>DevCop95 / BDB-Guardian<br><small style="color:#8b949e">Monitor + all evidence on this page</small></span></a>'
 +'</div>'
 +'<p style="color:#8b949e;font-size:.8rem">Banner generated on page load - ' + now.toLocaleString() + '</p>';
 })();
