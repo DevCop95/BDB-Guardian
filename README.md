@@ -113,7 +113,7 @@ events since the struct fix, consecutive `CRITICAL` verdicts (see `captures/stab
 
 - `BDBMonitor.ps1` - the monitor. `-TempSizeThresholdMB` (def. 1024),
   `-MaxScanSeconds` (def. 70), `-LogDir`, `-ConsoleLogPath`.
-- `Invoke-VolumeScan.ps1` + `bdb-csharp.ps1` - sacrificial scan worker.
+- `Invoke-VolumeScan.ps1` + `bdb-csharp.ps1` - child process that runs the native scan.
 - `Invoke-BDBSimulation.ps1` - SAFE IoC simulator for testing (controlled
   256 MB file, releases everything, verifies cleanup). Never fills the disk.
 - `launch-sim.ps1` - launches the simulator via WMI (detached).
