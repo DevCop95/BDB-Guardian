@@ -82,11 +82,11 @@ The simulator used a controlled 256 MB file - the disk was never filled.</p>
 </div>
 
 <h2>Detection as code</h2>
-<p class="note">Portable rules in <code>detections/</code> - ship to any SIEM with
+<p class="note">Portable rules in <code>detections/</code> - convert them with
 <code>sigma-cli</code> (<code>sigma check</code> / <code>sigma convert -t splunk|kusto</code>).
-MITRE ATT&CK: <b>TA0005 Defense Evasion / T1562.001 Disable or Modify Tools</b>
-(disk exhaustion to break Defender updates). Handle correlation (MRT + volume,
-one PID) is EDR-blind-spot coverage from <code>BDBMonitor.ps1</code>.</p>
+MITRE ATT&CK: <b>TA0005 Defense Evasion / T1562.001 Disable or Modify Tools</b>.
+The MRT+volume correlation in one PID is what EDRs don't cover - that is what
+<code>BDBMonitor.ps1</code> does.</p>
 <pre>title: BigDiskBuster-like Buster-File Creation in TEMP
 status: experimental
 logsource: { category: file_event, product: windows }
@@ -230,7 +230,7 @@ Full machine-readable evidence: <a href="https://github.com/DevCop95/BDB-Guardia
 plus a 256 MB hidden GUID buster-file. FP ~ 0.</p>
 <pre>VERDICT: CRITICAL - Confirmed BigDiskBuster-like activity:
 PID 19052 holds MRT+volume, buster-file present</pre>
-<p class="note">Repeated on consecutive runs (see captures/stability-run*.log). Zero Application Error events after the interop fix.</p>
+<p class="note">Same result on back-to-back runs (captures/stability-run*.log). No crashes since the struct fix.</p>
 </div></div>
 
 <div class="modal" id="m-post" onclick="if(event.target===this)closeModal('m-post')"><div class="sheet">
@@ -249,7 +249,7 @@ PID 19052 holds MRT+volume, buster-file present</pre>
 <li><b>IoC 2 - volume handle:</b> parallel native scan (<code>NtQuerySystemInformation</code> + <code>DuplicateHandle</code> + <code>NtQueryObject</code>), disk-files only (<code>GetFileType</code> gate skips pipes that hang queries).</li>
 <li><b>IoC 3 - buster-file:</b> hidden + oversized + GUID-like name in TEMP.</li>
 <li><b>Verdict:</b> same-PID MRT+volume correlation = CRITICAL. Lone volume handle never exceeds MEDIUM.</li>
-<li><b>Stability:</b> monitor is 100% managed; all native code runs in a sacrificial worker. Root-caused a <code>0xC0000374</code> heap corruption (wrong RM struct) via forum research and fixed it properly.</li>
+<li><b>Stability:</b> the monitor is plain managed code; native calls run in a child process. We hit a real heap corruption bug (<code>0xC0000374</code>, wrong struct passed to <code>RmGetList</code>) and fixed it - see the repo.</li>
 </ul>
 </div></div>
 

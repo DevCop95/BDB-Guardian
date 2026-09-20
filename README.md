@@ -2,14 +2,14 @@
 
 ![BDB-Guardian](docs/banner.png)
 
-Defensive monitor against the **BigDiskBuster** technique: denial of service
-against Windows Defender platform/signature updates via disk exhaustion.
+Defensive monitor for the **BigDiskBuster** technique (filling the disk so
+Windows Defender updates fail).
 
 Inspired by the analysis of [BigDiskBuster](https://github.com/MSNightmare/BigDiskBuster)
 by [MSNightmare](https://github.com/MSNightmare) (MIT License).
 
-**Live evidence report: [devcop95.github.io/BDB-Guardian](https://devcop95.github.io/BDB-Guardian/)** - responsive
-page with popups, verdict cards and full captures (served from [`index.html`](index.html) via GitHub Pages).
+**Evidence report:** https://devcop95.github.io/BDB-Guardian/ (the
+[`index.html`](index.html) in this repo, served with Pages).
 
 ## Authors & evidence
 
@@ -17,10 +17,6 @@ page with popups, verdict cards and full captures (served from [`index.html`](in
 |---|---|---|
 | <img src="https://github.com/DevCop95.png?s=96" width="96" alt="DevCop95"> | **[DevCop95](https://github.com/DevCop95)** | BDB-Guardian author (this repo) |
 | <img src="https://github.com/MSNightmare.png?s=96" width="96" alt="MSNightmare"> | **[MSNightmare](https://github.com/MSNightmare)** | Original BigDiskBuster PoC (MIT) - credited inspiration and technique source |
-
-**Live report (GitHub Pages): open [`index.html`](index.html)** - full
-evidence with console captures and JSON verdicts. To publish: push this repo
-to GitHub and enable *Settings > Pages > Deploy from branch > /(root)*.
 
 ## Proof: live detection
 
@@ -43,7 +39,7 @@ Terminal output during the live-detection run:
 
 ## Detection as code
 
-Portable rules in [`detections/`](detections/) (ship to any SIEM via `sigma-cli`):
+Portable rules in [`detections/`](detections/) (convert with `sigma-cli`):
 
 ```bash
 pip install sigma-cli
@@ -54,7 +50,7 @@ sigma convert -t kusto detections/bigdiskbuster-filecreate.yml   # Microsoft Sen
 
 - `detections/bigdiskbuster-filecreate.yml` - Sigma (Sysmon FileCreate): GUID-braced buster-file in TEMP.
 - `detections/mde-hunt.kql` - Microsoft Defender for Endpoint Advanced Hunting query for the same stage.
-- Handle correlation (MRT.exe + volume held by one PID) is EDR-blind-spot coverage provided by `BDBMonitor.ps1` in this repo.
+- Handle correlation (MRT.exe + volume held by one PID) is the part EDRs don't see - that's what `BDBMonitor.ps1` does.
 
 ## Reproduction (lab only)
 
@@ -89,17 +85,17 @@ the update gives up, it frees everything and goes back to sleep.
 non-whitelisted PID** = `CRITICAL` (FP ~ 0); with a buster-file present it is
 reported as confirmed BigDiskBuster-like activity.
 
-## Architecture (fault isolation + crash-free interop)
+## How it's built
 
 ```
-BDBMonitor.ps1          100% managed orchestrator (cannot crash on native heap)
-  +-- Invoke-VolumeScan.ps1   sacrificial child: ALL native code lives here
+BDBMonitor.ps1          plain managed code, no native calls here
+  +-- Invoke-VolumeScan.ps1   child process holding ALL the native code
   |     +-- bdb-csharp.ps1    RestartManager / NtQuerySystemInformation /
   |                           DuplicateHandle / NtQueryObject (inline C#)
   +-- verdict + JSON report
 ```
 
-Hardened with documented root causes (researched on forums/SO):
+What bit us along the way (documented so the next person doesn't repeat it):
 
 - `RmGetList` writes **`RM_PROCESS_INFO`** (~668 bytes/entry), not
   `RM_UNIQUE_PROCESS`. Passing the small struct overflows the heap
@@ -110,8 +106,8 @@ Hardened with documented root causes (researched on forums/SO):
   ~45 s to ~6-14 s.
 - If the worker ever dies, the monitor survives and reports degraded mode.
 
-Stability proven: repeated full runs with live IoCs, zero `Application Error`
-events, consecutive `CRITICAL` verdicts (see `captures/stability-run*.log`).
+Stability: holds up across repeat runs with live IoCs, no `Application Error`
+events since the struct fix, consecutive `CRITICAL` verdicts (see `captures/stability-run*.log`).
 
 ## Files
 
