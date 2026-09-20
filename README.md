@@ -28,22 +28,41 @@ to GitHub and enable *Settings > Pages > Deploy from branch > /(root)*.
 
 ![Baseline](docs/capture-baseline.png)
 
-## Real terminal screenshots
+Full transcripts + JSON verdicts: [`captures/`](captures/) and the
+[evidence report](https://devcop95.github.io/BDB-Guardian/).
 
-The PNGs above are renders. For pixel-real evidence, run this in a **visible**
-console window (it replays the capture log with colors and BitBlt-screenshots
-the terminal into `docs/`):
+## MITRE ATT&CK
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-02-detection.log -OutPng docs/shot-detection.png
-powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-01-baseline.log -OutPng docs/shot-baseline.png
+| Tactic | Technique | Procedure |
+|---|---|---|
+| Defense Evasion (TA0005) | [T1562.001 - Disable or Modify Tools](https://attack.mitre.org/techniques/T1562/001/) | Filling the disk so Defender platform/signature updates fail; holds `MRT.exe` and the `C:` volume open while the buster-file exists |
+
+## Detection as code
+
+Portable rules in [`detections/`](detections/) (ship to any SIEM via `sigma-cli`):
+
+```bash
+pip install sigma-cli
+sigma check detections/bigdiskbuster-filecreate.yml
+sigma convert -t splunk detections/bigdiskbuster-filecreate.yml
+sigma convert -t kusto detections/bigdiskbuster-filecreate.yml   # Microsoft Sentinel
 ```
 
-Then commit `docs/shot-detection.png` and `docs/shot-baseline.png` - they
-appear automatically in this README and on the Pages site below:
+- `detections/bigdiskbuster-filecreate.yml` - Sigma (Sysmon FileCreate): GUID-braced buster-file in TEMP.
+- `detections/mde-hunt.kql` - Microsoft Defender for Endpoint Advanced Hunting query for the same stage.
+- Handle correlation (MRT.exe + volume held by one PID) is EDR-blind-spot coverage provided by `BDBMonitor.ps1` in this repo.
 
-![Real CRITICAL screenshot](docs/shot-detection.png)
-![Real CLEAN screenshot](docs/shot-baseline.png)
+## Reproduction (lab only)
+
+Isolated Windows VM with snapshot. Never on production systems.
+
+```powershell
+# 1. Start the SAFE simulator (controlled 256 MB file, self-cleaning)
+powershell -NoProfile -ExecutionPolicy Bypass -File launch-sim.ps1 -DurationSec 150
+# 2. Run the monitor while IoCs are active
+powershell -NoProfile -ExecutionPolicy Bypass -File BDBMonitor.ps1 -TempSizeThresholdMB 100
+# Expected: VERDICT: CRITICAL - same PID holds MRT+volume, buster-file present
+```
 
 ## How BigDiskBuster works (threat model)
 

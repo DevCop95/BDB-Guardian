@@ -87,14 +87,21 @@ The simulator used a controlled 256 MB file - the disk was never filled.</p>
 <div class="card" onclick="openModal('m-post')"><h3>Phase 3 - Post</h3><span class="badge clean">CLEAN</span><p class="note">Simulator self-cleaned. Zero leftovers.</p></div>
 </div>
 
-<h2>Real terminal screenshots</h2>
-<p class="note">Genuine BitBlt screenshots of a live console (not renders). If the images
-below do not load yet, run the command under them in a <b>visible</b> terminal -
-it replays the capture log with colors and screenshots the window.</p>
-<pre>powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-02-detection.log -OutPng docs/shot-detection.png
-powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-01-baseline.log -OutPng docs/shot-baseline.png</pre>
-<p><img src="docs/shot-detection.png" alt="Real CRITICAL screenshot" style="width:100%;height:auto;border-radius:12px;border:1px solid #30363d" onerror="this.style.display='none'"></p>
-<p><img src="docs/shot-baseline.png" alt="Real CLEAN screenshot" style="width:100%;height:auto;border-radius:12px;border:1px solid #30363d" onerror="this.style.display='none'"></p>
+<h2>Detection as code</h2>
+<p class="note">Portable rules in <code>detections/</code> - ship to any SIEM with
+<code>sigma-cli</code> (<code>sigma check</code> / <code>sigma convert -t splunk|kusto</code>).
+MITRE ATT&CK: <b>TA0005 Defense Evasion / T1562.001 Disable or Modify Tools</b>
+(disk exhaustion to break Defender updates). Handle correlation (MRT + volume,
+one PID) is EDR-blind-spot coverage from <code>BDBMonitor.ps1</code>.</p>
+<pre>title: BigDiskBuster-like Buster-File Creation in TEMP
+status: experimental
+logsource: { category: file_event, product: windows }
+detection:
+  selection: { EventID: 11,
+    TargetFilename|re: '\\Temp\\\{GUID\}$' }
+condition: selection   # full rule: detections/bigdiskbuster-filecreate.yml
+level: medium</pre>
+<p class="note">Also: <code>detections/mde-hunt.kql</code> (Defender for Endpoint Advanced Hunting).</p>
 
 <h2>Inline captures</h2>
 <p class="note">Same content as the popups, for readers that prefer scrolling.</p>

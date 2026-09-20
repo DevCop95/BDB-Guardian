@@ -1,0 +1,28 @@
+title: BigDiskBuster-like Buster-File Creation in TEMP
+id: 15755e6b-a54d-4a6e-9773-554c724f8a63
+status: experimental
+description: >
+  Detects creation of GUID-braced files in user TEMP directories - the
+  buster-file stage of the BigDiskBuster technique, where hidden files sized
+  to all free disk space are created to make Defender platform/signature
+  updates fail with disk-full.
+author: DevCop95
+date: 2026/09/20
+references:
+  - https://github.com/DevCop95/BDB-Guardian
+  - https://github.com/MSNightmare/BigDiskBuster
+tags:
+  - attack.defense_evasion
+  - attack.t1562.001
+logsource:
+  category: file_event
+  product: windows
+detection:
+  selection:
+    EventID: 11
+    TargetFilename|re: '\\Temp\\\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$'
+  condition: selection
+falsepositives:
+  - Software installers staging payloads under GUID-like names (braced GUID names are rare outside this technique)
+  - Developer/test harnesses creating temp fixtures
+level: medium

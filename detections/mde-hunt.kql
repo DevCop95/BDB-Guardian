@@ -1,0 +1,12 @@
+// BigDiskBuster-like buster-file hunt - Microsoft Defender for Endpoint
+// Looks for GUID-braced files created in TEMP (the disk-exhaustion stage).
+// Handle correlation (MRT.exe + volume held by the same PID) is not visible
+// in MDE tables - use BDB-Guardian (this repo) for that half. Run in:
+// Microsoft 365 Defender > Hunting > Advanced hunting.
+DeviceFileEvents
+| where ActionType == "FileCreated"
+| where FolderPath has @"\AppData\Local\Temp" or FolderPath has @"\Windows\Temp"
+| where FileName matches regex @"^\{[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\}$"
+| project Timestamp, DeviceName, InitiatingProcessFileName,
+    InitiatingProcessCommandLine, FolderPath, FileName, FileSize
+| order by Timestamp desc
