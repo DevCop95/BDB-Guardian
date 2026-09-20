@@ -28,6 +28,23 @@ to GitHub and enable *Settings > Pages > Deploy from branch > /(root)*.
 
 ![Baseline](docs/capture-baseline.png)
 
+## Real terminal screenshots
+
+The PNGs above are renders. For pixel-real evidence, run this in a **visible**
+console window (it replays the capture log with colors and BitBlt-screenshots
+the terminal into `docs/`):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-02-detection.log -OutPng docs/shot-detection.png
+powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-01-baseline.log -OutPng docs/shot-baseline.png
+```
+
+Then commit `docs/shot-detection.png` and `docs/shot-baseline.png` - they
+appear automatically in this README and on the Pages site below:
+
+![Real CRITICAL screenshot](docs/shot-detection.png)
+![Real CLEAN screenshot](docs/shot-baseline.png)
+
 ## How BigDiskBuster works (threat model)
 
 The PoC watches the whole `C:` volume for Defender update directories

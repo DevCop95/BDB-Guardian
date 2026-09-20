@@ -51,6 +51,8 @@ footer{margin-top:3em;color:var(--mut);font-size:.8rem;border-top:1px solid var(
 
 <div class="hero"><img src="docs/banner.png" alt="BDB-Guardian banner"></div>
 
+<div id="dualbanner"></div>
+
 <h1>BDB-Guardian - Detection Report</h1>
 <p class="note">Defensive PowerShell monitor vs the BigDiskBuster technique
 (Defender-update DoS via disk exhaustion). Tested on Windows 11, admin PowerShell 5.1.
@@ -84,6 +86,15 @@ The simulator used a controlled 256 MB file - the disk was never filled.</p>
 <div class="card" onclick="openModal('m-det')"><h3>Phase 2 - Detection</h3><span class="badge crit">CRITICAL</span><p class="note">MRT_LOCK + VOLUME_HANDLE, same PID + buster-file.</p></div>
 <div class="card" onclick="openModal('m-post')"><h3>Phase 3 - Post</h3><span class="badge clean">CLEAN</span><p class="note">Simulator self-cleaned. Zero leftovers.</p></div>
 </div>
+
+<h2>Real terminal screenshots</h2>
+<p class="note">Genuine BitBlt screenshots of a live console (not renders). If the images
+below do not load yet, run the command under them in a <b>visible</b> terminal -
+it replays the capture log with colors and screenshots the window.</p>
+<pre>powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-02-detection.log -OutPng docs/shot-detection.png
+powershell -NoProfile -ExecutionPolicy Bypass -File Capture-Shot.ps1 -LogFile captures/capture-01-baseline.log -OutPng docs/shot-baseline.png</pre>
+<p><img src="docs/shot-detection.png" alt="Real CRITICAL screenshot" style="width:100%;height:auto;border-radius:12px;border:1px solid #30363d" onerror="this.style.display='none'"></p>
+<p><img src="docs/shot-baseline.png" alt="Real CLEAN screenshot" style="width:100%;height:auto;border-radius:12px;border:1px solid #30363d" onerror="this.style.display='none'"></p>
 
 <h2>Inline captures</h2>
 <p class="note">Same content as the popups, for readers that prefer scrolling.</p>
@@ -248,6 +259,21 @@ PID 19052 holds MRT+volume, buster-file present</pre>
 </div></div>
 
 <script>
+// Dual-profile banner, generated on every page load.
+(function(){
+var now = new Date();
+var el = document.getElementById('dualbanner');
+el.innerHTML =
+'<div style="display:flex;gap:14px;flex-wrap:wrap;margin:1.2em 0">'
++'<a href="https://github.com/MSNightmare/BigDiskBuster" style="flex:1 1 280px;display:flex;align-items:center;gap:12px;background:#161b22;border:1px solid #ff7b72;border-radius:12px;padding:12px;text-decoration:none;color:#c9d1d9">'
++'<img src="https://github.com/MSNightmare.png?s=112" alt="PoC author" style="width:64px;height:64px;border-radius:50%">'
++'<span><b>MSNightmare / BigDiskBuster</b><br><small style="color:#8b949e">Original PoC (MIT) - the technique</small></span></a>'
++'<a href="https://github.com/DevCop95/BDB-Guardian" style="flex:1 1 280px;display:flex;align-items:center;gap:12px;background:#161b22;border:1px solid #58a6ff;border-radius:12px;padding:12px;text-decoration:none;color:#c9d1d9">'
++'<img src="https://github.com/DevCop95.png?s=112" alt="Guardian author" style="width:64px;height:64px;border-radius:50%">'
++'<span><b>DevCop95 / BDB-Guardian</b><br><small style="color:#8b949e">Defensive monitor - the detection</small></span></a>'
++'</div>'
++'<p style="color:#8b949e;font-size:.8rem">Banner generated on page load - ' + now.toLocaleString() + '</p>';
+})();
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape'){
