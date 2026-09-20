@@ -8,9 +8,8 @@ against Windows Defender platform/signature updates via disk exhaustion.
 Inspired by the analysis of [BigDiskBuster](https://github.com/MSNightmare/BigDiskBuster)
 by [MSNightmare](https://github.com/MSNightmare) (MIT License).
 
-**Live evidence report (GitHub Pages): [`index.html`](index.html)** - responsive
-page with popups, verdict cards and full captures. To publish: push this repo
-to GitHub and enable *Settings > Pages > Deploy from branch > /(root)*.
+**Live evidence report: [devcop95.github.io/BDB-Guardian](https://devcop95.github.io/BDB-Guardian/)** - responsive
+page with popups, verdict cards and full captures (served from [`index.html`](index.html) via GitHub Pages).
 
 ## Authors & evidence
 
